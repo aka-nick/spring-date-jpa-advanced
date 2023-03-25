@@ -44,7 +44,7 @@ class MemberTest {
         List<Member> members = em.createQuery("select m from Member m ",
                 Member.class).getResultList();
 
-        assertThat(memb가ers.get(0).getTeam().getName()).isEqualTo(teamA.getName());
+        assertThat(members.get(0).getTeam().getName()).isEqualTo(teamA.getName());
         assertThat(members.get(1).getTeam().getName()).isEqualTo(teamA.getName());
         assertThat(members.get(2).getTeam().getName()).isEqualTo(teamB.getName());
         assertThat(members.get(3).getTeam().getName()).isEqualTo(teamB.getName());
