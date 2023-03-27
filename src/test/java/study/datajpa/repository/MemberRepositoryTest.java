@@ -227,4 +227,31 @@ class MemberRepositoryTest {
          하지만 가장 좋은 것은, 벌크 연산 뒤에는 그냥 아무 것도 안 하는 것이 문제 생길 일이 없고 좋다.
          */
     }
+
+    @Test
+    void findMemberLazy() {
+        // given
+        Team teamA = new Team("teamA");
+        Team teamB = new Team("teamB");
+        teamRepository.save(teamA);
+        teamRepository.save(teamB);
+
+        Member member1 = new Member("member1", 10, teamA);
+        Member member2 = new Member("member2", 15, teamB);
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+
+        em.flush();
+        em.clear();
+
+        // when
+        System.out.println("============   WHEN   ===============");
+        List<Member> members = memberRepository.findAll();
+//        List<Member> members = memberRepository.findMemberFetch();
+        for (Member member : members) {
+            System.out.println("member = " + member.getUsername());
+            System.out.println("member = " + member.getTeam().getName());
+        }
+    }
+
 }
