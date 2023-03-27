@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import java.util.Optional;
+import javax.persistence.EntityManager;
 import javax.persistence.NonUniqueResultException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,9 @@ class MemberRepositoryTest {
 
     @Autowired
     TeamRepository teamRepository;
+
+    @Autowired
+    EntityManager em;
 
     @Test
     void save() {
@@ -203,5 +207,17 @@ class MemberRepositoryTest {
         int updated = memberRepository.bulkAgePlus(15);
 
         assertThat(updated).isEqualTo(3);
+
+        Member memberA5 = memberRepository.findByUsername("memberA5");
+        assertThat(memberA5.getAge()).isEqualTo(17); // 18이 아니다!!!
+        /**
+         벌크 연산은 영속성 컨텍스트의 엔티티를 통하지 않고 바로 쿼리를 날리는 것이기 때문에 유의해야 한다!!
+         아래처럼 다시 영속성 컨텍스트를 초기화하여 문제를 회피할 수 있다!!
+         */
+        em.flush();
+        em.clear();
+
+        Member reMemberA5 = memberRepository.findByUsername("memberA5");
+        assertThat(reMemberA5.getAge()).isEqualTo(18); // 이제 18이다
     }
 }
