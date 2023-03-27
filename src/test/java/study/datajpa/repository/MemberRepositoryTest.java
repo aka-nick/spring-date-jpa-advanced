@@ -219,5 +219,12 @@ class MemberRepositoryTest {
 
         Member reMemberA5 = memberRepository.findByUsername("memberA5");
         assertThat(reMemberA5.getAge()).isEqualTo(18); // 이제 18이다
+
+        /**
+         혹은 리포지토리 메서드에 @Modifying(clearAutomatically = true) 라고 옵션을 주면
+         벌크 연산 뒤에 알아서 엔티티매니저를 clear한다.
+
+         하지만 가장 좋은 것은, 벌크 연산 뒤에는 그냥 아무 것도 안 하는 것이 문제 생길 일이 없고 좋다.
+         */
     }
 }
