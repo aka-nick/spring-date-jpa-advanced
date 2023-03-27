@@ -66,4 +66,16 @@ class MemberRepositoryTest {
 
     }
 
+    @Test
+    void jpqlTest() {
+        Member m1 = new Member("AAA", 10, null);
+        Member m2 = new Member("AAA", 20, null);
+        memberRepository.save(m1);
+        memberRepository.save(m2);
+
+        List<Member> find = memberRepository.findMember("AAA", 10);
+
+        assertThat(find.size()).isEqualTo(1);
+        assertThat(find.get(0)).isEqualTo(m1);
+    }
 }
