@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.transaction.annotation.Transactional;
@@ -170,12 +171,13 @@ class MemberRepositoryTest {
         memberRepository.save(member5);
 
         PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Direction.DESC, "username"));
-        Page<Member> result = memberRepository.findByAge(10, pageRequest);
+//        Page<Member> result = memberRepository.findByAge(10, pageRequest);
+        Slice<Member> result = memberRepository.findSliceByAge(10, pageRequest);
 
         assertThat(result.getNumberOfElements()).isEqualTo(3); // 페이지 당 컨텐트 개수
-        assertThat(result.getTotalElements()).isEqualTo(5); // 총 컨텐트 개수(totalCount)
+//        assertThat(result.getTotalElements()).isEqualTo(5); // 총 컨텐트 개수(totalCount)
         assertThat(result.getNumber()).isEqualTo(0); // 페이지 넘버
         assertThat(result.isFirst()).isTrue();
-        assertThat(result.isLast()).isFalse();
+        assertThat(result.hasNext()).isTrue();
     }
 }
