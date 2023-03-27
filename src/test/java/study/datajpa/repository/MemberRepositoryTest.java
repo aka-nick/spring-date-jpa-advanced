@@ -171,11 +171,16 @@ class MemberRepositoryTest {
         memberRepository.save(member5);
 
         PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Direction.DESC, "username"));
-//        Page<Member> result = memberRepository.findByAge(10, pageRequest);
-        Slice<Member> result = memberRepository.findSliceByAge(10, pageRequest);
+        Page<Member> result = memberRepository.findByAge(10, pageRequest);
+
+        // DTO로 쉽게 매핑하는 방법
+        Page<MemberDto> resultDto = result.map(
+                member -> new MemberDto(member.getId(), member.getUsername(), null));
+
+//        Slice<Member> result = memberRepository.findSliceByAge(10, pageRequest);
 
         assertThat(result.getNumberOfElements()).isEqualTo(3); // 페이지 당 컨텐트 개수
-//        assertThat(result.getTotalElements()).isEqualTo(5); // 총 컨텐트 개수(totalCount)
+        assertThat(result.getTotalElements()).isEqualTo(5); // 총 컨텐트 개수(totalCount)
         assertThat(result.getNumber()).isEqualTo(0); // 페이지 넘버
         assertThat(result.isFirst()).isTrue();
         assertThat(result.hasNext()).isTrue();
