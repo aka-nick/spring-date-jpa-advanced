@@ -18,6 +18,6 @@ public class DataJpaApplication {
 
 	@Bean
 	public AuditorAware<String> auditorProvider() {
-		return () -> Optional.of(UUID.randomUUID().toString());
+		return () -> Optional.of(UUID.randomUUID().toString()); // 실제로는 세션에서 ID를 꺼내는 등의 처리를 해주면 된다.
 	}
 }

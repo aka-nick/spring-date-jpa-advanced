@@ -77,5 +77,7 @@ class MemberTest {
 
         System.out.println("find = " + find.getCreatedDate());
         System.out.println("find = " + find.getLastModifiedDate());
+        System.out.println("find = " + find.getCreatedBy());
+        System.out.println("find = " + find.getLastModifiedBy());
     }
 }
