@@ -10,6 +10,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.transaction.annotation.Transactional;
 import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
@@ -149,5 +153,29 @@ class MemberRepositoryTest {
                                         // 그러나 알아만 두고, 그냥 Optional을 쓰자.
         assertThatThrownBy(() -> memberRepository.findByUsername("AAA2"))
                 .isInstanceOf(IncorrectResultSizeDataAccessException.class); // JPA가 발생시키는 NonUniqueResultSizeException을 data jpa가 래핑한 예외
+    }
+
+    @Test
+    void paging() {
+        Member member1 = new Member("memberA1", 10, null);
+        Member member2 = new Member("memberA2", 10, null);
+        Member member3 = new Member("memberA3", 10, null);
+        Member member4 = new Member("memberA4", 10, null);
+        Member member5 = new Member("memberA5", 10, null);
+
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+        memberRepository.save(member3);
+        memberRepository.save(member4);
+        memberRepository.save(member5);
+
+        PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Direction.DESC, "username"));
+        Page<Member> result = memberRepository.findByAge(10, pageRequest);
+
+        assertThat(result.getNumberOfElements()).isEqualTo(3); // 페이지 당 컨텐트 개수
+        assertThat(result.getTotalElements()).isEqualTo(5); // 총 컨텐트 개수(totalCount)
+        assertThat(result.getNumber()).isEqualTo(0); // 페이지 넘버
+        assertThat(result.isFirst()).isTrue();
+        assertThat(result.isLast()).isFalse();
     }
 }
