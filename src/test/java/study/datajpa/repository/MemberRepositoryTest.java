@@ -276,4 +276,8 @@ class MemberRepositoryTest {
         Member find = memberRepository.findLockByUsername(member1.getUsername()).get(0);
     }
 
+    @Test
+    void customRepositoryMethod() {
+        memberRepository.findCustomMember(); // 사용자 정의 리포지토리 메서드
+    }
 }
