@@ -111,5 +111,16 @@ class MemberRepositoryTest {
         assertThat(find.getTeamName()).isEqualTo(t1.getName());
     }
 
+    @Test
+    void findByNamesTest() {
+        Member m1 = new Member("AAA1", 10, null);
+        Member m2 = new Member("AAA2", 20, null);
+        memberRepository.save(m1);
+        memberRepository.save(m2);
 
+        List<String> names = List.of("AAA1", "AAA2");
+        List<Member> find = memberRepository.findByNames(names);
+
+        assertThat(find.size()).isEqualTo(2);
+    }
 }
