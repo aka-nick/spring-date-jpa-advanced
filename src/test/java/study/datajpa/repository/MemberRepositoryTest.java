@@ -247,11 +247,33 @@ class MemberRepositoryTest {
         // when
         System.out.println("============   WHEN   ===============");
         List<Member> members = memberRepository.findAll();
-//        List<Member> members = memberRepository.findMemberFetch();
+//        List<Member> members = mem1berRepository.findMemberFetch();
         for (Member member : members) {
             System.out.println("member = " + member.getUsername());
             System.out.println("member = " + member.getTeam().getName());
         }
+    }
+
+    @Test
+    void queryHint() {
+        Member member1 = new Member("member1", 10, null);
+        memberRepository.save(member1);
+        em.flush();
+        em.clear();
+
+        Member find = memberRepository.findReadonlyByUsername(member1.getUsername());
+        find.setUsername("member2");
+        em.flush();
+    }
+
+    @Test
+    void lock() {
+        Member member1 = new Member("member1", 10, null);
+        memberRepository.save(member1);
+        em.flush();
+        em.clear();
+
+        Member find = memberRepository.findLockByUsername(member1.getUsername()).get(0);
     }
 
 }
