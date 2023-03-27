@@ -4,16 +4,21 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
+import java.util.Optional;
 import javax.persistence.EntityManager;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import study.datajpa.repository.MemberRepository;
 
 @Transactional
 @SpringBootTest
 class MemberTest {
+
+    @Autowired
+    MemberRepository memberRepository;
 
     @Autowired
     EntityManager em;
@@ -51,4 +56,26 @@ class MemberTest {
 
     }
 
+    @Test
+    void jpaEventBaseEntityTest() throws InterruptedException {
+        // given
+        Member member = new Member("member1");
+        memberRepository.save(member); // @PrePersist
+
+        Thread.sleep(300);
+        member.setUsername("memberUpdate");
+
+        em.flush(); // @PreUpdate
+        em.clear();
+
+        // when
+        Member find = memberRepository.findById(member.getId()).get();
+
+        // then
+        assertThat(find.getId()).isEqualTo(member.getId());
+        assertThat(find.getUsername()).isEqualTo("memberUpdate");
+
+        System.out.println("find = " + find.getCreatedDate());
+        System.out.println("find = " + find.getLastModifiedDate());
+    }
 }
