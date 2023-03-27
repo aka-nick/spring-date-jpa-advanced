@@ -88,4 +88,23 @@ class MemberJpaRepositoryTest {
         assertThat(byPage.size()).isEqualTo(3);
         assertThat(l).isEqualTo(5);
     }
+
+    @Test
+    void bulk() {
+        Member member1 = new Member("memberA1", 10, null);
+        Member member2 = new Member("memberA2", 14, null);
+        Member member3 = new Member("memberA3", 15, null);
+        Member member4 = new Member("memberA4", 16, null);
+        Member member5 = new Member("memberA5", 17, null);
+
+        memberJpaRepository.save(member1);
+        memberJpaRepository.save(member2);
+        memberJpaRepository.save(member3);
+        memberJpaRepository.save(member4);
+        memberJpaRepository.save(member5);
+
+        int updated = memberJpaRepository.bulkAgePlus(15);
+
+        assertThat(updated).isEqualTo(3);
+    }
 }
