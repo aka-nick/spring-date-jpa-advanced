@@ -1,11 +1,15 @@
 package study.datajpa.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
+import java.util.Optional;
+import javax.persistence.NonUniqueResultException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.transaction.annotation.Transactional;
 import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
@@ -122,5 +126,28 @@ class MemberRepositoryTest {
         List<Member> find = memberRepository.findByNames(names);
 
         assertThat(find.size()).isEqualTo(2);
+    }
+
+    @Test
+    void findManyTypeNamesTest() {
+        Member m1 = new Member("AAA1", 10, null);
+        Member m2 = new Member("AAA2", 20, null);
+        Member m3 = new Member("AAA2", 20, null);
+        memberRepository.save(m1);
+        memberRepository.save(m2);
+        memberRepository.save(m3);
+
+        List<Member> find = memberRepository.findListByUsername("AAA1");
+        Member aaa1 = memberRepository.findByUsername("AAA1");
+        Member um = memberRepository.findByUsername("어떻게회원이름이엄준식");
+        Optional<Member> aaa11 = memberRepository.findOptionalByUsername("AAA1");
+
+        assertThat(find.size()).isEqualTo(1);
+        assertThat(aaa1).isEqualTo(m1);
+        assertThat(aaa11.get()).isEqualTo(m1);
+        assertThat(um).isNull(); // 결과가 없으면 예외를 터트리는 JPA와 달리, data jpa는 null을 반환한다.
+                                        // 그러나 알아만 두고, 그냥 Optional을 쓰자.
+        assertThatThrownBy(() -> memberRepository.findByUsername("AAA2"))
+                .isInstanceOf(IncorrectResultSizeDataAccessException.class); // JPA가 발생시키는 NonUniqueResultSizeException을 data jpa가 래핑한 예외
     }
 }
