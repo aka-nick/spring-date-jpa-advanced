@@ -41,7 +41,8 @@ public class MemberApiController {
     @GetMapping("/members")
     public Page<MemberDto> list(Pageable pageable) {
         Page<Member> pageEntity = memberRepository.findAll(pageable);
-        return pageEntity.map(m -> new MemberDto(m.getId(), m.getUsername(), null));
+        pageEntity.getPageable().getPageNumber();
+        return pageEntity.map(MemberDto::new);
     }
 
 
