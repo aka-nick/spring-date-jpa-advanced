@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
@@ -279,5 +280,27 @@ class MemberRepositoryTest {
     @Test
     void customRepositoryMethod() {
         memberRepository.findCustomMember(); // 사용자 정의 리포지토리 메서드
+    }
+
+    @Test
+    void specBasic() {
+        Team teamA = new Team("teamA");
+        em.persist(teamA);
+
+        Member m1 = new Member("m1", 0, teamA);
+        Member m2 = new Member("m2", 0, teamA);
+        em.persist(m1);
+        em.persist(m2);
+
+        em.flush();
+        em.clear();
+
+        Specification<Member> spec = MemberSpec.username("m1")
+                .and(MemberSpec.teamName("teamA"));
+
+        List findAll = memberRepository.findAll(spec);
+
+        assertThat(findAll.size()).isEqualTo(1);
+        assertThat(((Member)findAll.get(0)).getUsername()).isEqualTo(m1.getUsername());
     }
 }
